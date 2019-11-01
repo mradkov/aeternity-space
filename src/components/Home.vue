@@ -11,6 +11,7 @@
           <ae-badge>
             Explore AENS
           </ae-badge>
+          <ae-divider />
           <ae-switch
             name="example"
             :choices="[
@@ -22,12 +23,23 @@
           />
 
         <div id="auctions">
+          <h4 class="text-left">Filters</h4>
           <div class="row">
-            <label>Filter by Name:</label>
-            <input type="text" class="form-control" v-model="filters.name.value"/>
+            <ae-label>name</ae-label>
+            <ae-input
+              v-model="filters.name.value"
+            />
+          </div>
+
+          <div class="row">
+            <ae-label>length</ae-label>
+            <InputSpinner
+             />
+             <InputSpinner
+             />
           </div>
           
-          <div class="row">
+          <div class="row mt-5">
             <v-table
               :data="namesAuctionsActive"
               :filters="filters"
@@ -48,7 +60,7 @@
                     <td>
                       Block: 
                       {{ row.expiration }}
-                      ~ 19:00:00 est {{ currentHeight }}
+                      ~ {{ calculateEndDate(row.expiration) }}
                     </td>
                     <td>{{ (row.winning_bid * Math.pow(10,-18)).toFixed(2) }} AE</td>
                     <td>
@@ -116,6 +128,25 @@
                     return {...{id: id}, ...task};
                 });
             },
+            calculateEndDate(endBlock) {
+              return (endBlock - this.currentHeight) < 0 ? 'ended' : this.formatDate(new Date(new Date().getTime() + (endBlock - this.currentHeight)*3*60000));
+            },
+            appendLeadingZeroes(n){
+              if(n <= 9){
+                return "0" + n;
+              }
+              return n
+            },
+            formatDate(d) {
+              let format_date =
+                  d.getFullYear() + "-" + 
+                  this.appendLeadingZeroes(d.getMonth() + 1) + "-" +
+                  this.appendLeadingZeroes(d.getDate()) + " " +
+                  this.appendLeadingZeroes(d.getHours()) + ":" +
+                  this.appendLeadingZeroes(d.getMinutes()) + ":" +
+                  this.appendLeadingZeroes(d.getSeconds());
+              return format_date;
+            },
             loading(status) {
               this.showLoading = status;
             },
@@ -145,7 +176,7 @@
                 .get('https://mainnet.aeternal.io/v2/key-blocks/current/height')
                 .then(response => {
                     var parsedobj = JSON.parse(JSON.stringify(response))
-                    this.currentHeight = parsedobj.data.length
+                    this.currentHeight = parsedobj.data.height
                 })
             }
         },
