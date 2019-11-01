@@ -29,7 +29,7 @@
                 <tr v-for="row in displayData" :key="row.id">
                   <td>{{ row.name }}</td>
                   <td>{{ row.expiration }}</td>
-                  <td>{{ row.winning_bid }}</td>
+                  <td>{{ (row.winning_bid * Math.pow(10,-18)).toFixed(2) }} AE</td>
                   <td>{{ row.winning_bidder }}</td>
                 </tr>
             </tbody>
