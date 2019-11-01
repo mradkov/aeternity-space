@@ -8,7 +8,9 @@
     <div id="app-content">
       <h2>æternity AENS naming system</h2>
       <div class="container">
-        ... display info here
+        <ae-badge>
+          Explore AENS
+        </ae-badge>
 
         <div id="auctions">
 
@@ -21,7 +23,7 @@
             class="table table-bordered">
             <thead slot="head">
                 <th>Name</th>
-                <th>Expiration</th>
+                <th>Expire at</th>
                 <th>Winning bid</th>
                 <th>Highest bidder</th>
             </thead>
@@ -32,13 +34,24 @@
                       {{ row.name }}
                     </ae-text>
                   </td>
-                  <td>{{ row.expiration }}</td>
+                  <td>
+                    Block: 
+                    {{ row.expiration }}
+                    ~ 19:00:00 est
+                  </td>
                   <td>{{ (row.winning_bid * Math.pow(10,-18)).toFixed(2) }} AE</td>
                   <td>
-                    <ae-address
-                      length='short'
-                      :value="row.winning_bidder"
-                    />
+                    <tr class="tr-noborder">
+                      <td>
+                        <ae-identicon :address="row.winning_bidder" size="xs" />
+                      </td>
+                      <td>
+                         <ae-address
+                          length='short'
+                          :value="row.winning_bidder"
+                        />
+                      </td>
+                    </tr>
                   </td>
                 </tr>
             </tbody>
@@ -123,6 +136,10 @@
 </script>
 
 <style>
+  tr.tr-noborder td {
+    border: 0;
+  }
+
   #app-content {
     max-width: 1200px;
     padding: 0 20px 20px;
