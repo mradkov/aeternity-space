@@ -32,11 +32,29 @@
           </div>
 
           <div class="row">
-            <ae-label>length</ae-label>
-            <InputSpinner
-             />
-             <InputSpinner
-             />
+              <ae-label>length</ae-label>
+              <div class="range-slider" @change="slide">
+                <div class="d-flex justify-content-center my-4">
+                  <span class="font-weight-bold indigo-text mr-2 mt-1">from {{ filters.filterLength.value.min }}</span>
+                  <form class="range-field w-100">
+                    <input 
+                      @change="slide" 
+                      v-model="filters.filterLength.value.min"
+                      :min="1"
+                      :max="99"
+                      :step="slider.step"
+                      type="range" />
+                    <input
+                      @change="slide"
+                      v-model="filters.filterLength.value.max"
+                      :min="filters.filterLength.value.min"
+                      :max="99"
+                      :step="slider.step"
+                      type="range" /> 
+                  </form>
+                  <span class="font-weight-bold indigo-text ml-2 mt-1">to {{ filters.filterLength.value.max }}</span>
+                </div>
+              </div>
           </div>
           
           <div class="row mt-5">
@@ -115,13 +133,26 @@
                 namesAuctionsCount: null,
                 filters: {
                   name: { value: '', keys: ['name'] },
+                  filterLength: { value: { min: 1, max: 99 }, custom: this.filterLength }
                 },
-                currentHeight: 162125
+                currentHeight: 162125,
+                slider: {
+                  step: "1"
+                }
             }
         },
         methods: {
+            slide() {
+              if (this.filters.filterLength.min > this.filters.filterLength.max) {
+                var tmp = this.filters.filterLength.max;
+                this.filters.filterLength.max = this.filters.filterLength.min;
+                this.filters.filterLength.min = tmp;
+              }
+            },
             filterLength (filterValue, row) {
-              return row.length >= filterValue.min && row.length <= filterValue.max
+              let suffix = ".chain".length;
+              let nameLength = row.name.length - suffix;
+              return nameLength >= filterValue.min && nameLength <= filterValue.max
             },
             transformTasksList(list) {
                 return list.map(([id, task]) => {
@@ -143,8 +174,7 @@
                   this.appendLeadingZeroes(d.getMonth() + 1) + "-" +
                   this.appendLeadingZeroes(d.getDate()) + " " +
                   this.appendLeadingZeroes(d.getHours()) + ":" +
-                  this.appendLeadingZeroes(d.getMinutes()) + ":" +
-                  this.appendLeadingZeroes(d.getSeconds());
+                  this.appendLeadingZeroes(d.getMinutes());
               return format_date;
             },
             loading(status) {
@@ -269,4 +299,83 @@
   .status-label.ToBeDeployed {
     background-color: limegreen;
   }
+
+  .range-slider {
+  width: 300px;
+  margin: auto;
+  text-align: center;
+  position: relative;
+  height: 6em;
+}
+
+.range-slider svg,
+.range-slider input[type=range] {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+input[type=number] {
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 1.6em;
+  -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type=number]:invalid,
+input[type=number]:out-of-range {
+  border: 2px solid #ff6347;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #f03c6e;
+}
+
+input[type=range]:focus::-ms-fill-lower {
+  background: #f03c6e;
+}
+
+input[type=range]:focus::-ms-fill-upper {
+  background: #f03c6e;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: #f03c6e;
+  border-radius: 1px;
+  box-shadow: none;
+  border: 0;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  z-index: 2;
+  position: relative;
+  box-shadow: 0px 0px 0px #000;
+  border: 1px solid #f03c6e;
+  height: 18px;
+  width: 18px;
+  border-radius: 25px;
+  background: #f03c6e;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -7px;
+}
+
 </style>
