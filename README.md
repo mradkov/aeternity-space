@@ -1,2 +1,5 @@
-# aepp-todolist
-Sophia simple todo-list aepp
+# Aeternity Name
+
+This website will be showing relevant information to aeternity's AENS.
+
+https://aeternity.name
