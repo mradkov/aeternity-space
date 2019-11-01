@@ -27,10 +27,19 @@
             </thead>
             <tbody slot="body" slot-scope="{displayData}">
                 <tr v-for="row in displayData" :key="row.id">
-                  <td>{{ row.name }}</td>
+                  <td>
+                    <ae-text face="mono-base">
+                      {{ row.name }}
+                    </ae-text>
+                  </td>
                   <td>{{ row.expiration }}</td>
                   <td>{{ (row.winning_bid * Math.pow(10,-18)).toFixed(2) }} AE</td>
-                  <td>{{ row.winning_bidder }}</td>
+                  <td>
+                    <ae-address
+                      length='short'
+                      :value="row.winning_bidder"
+                    />
+                  </td>
                 </tr>
             </tbody>
           </v-table>
@@ -49,7 +58,6 @@
 
     import {Universal} from '@aeternity/aepp-sdk/es/ae/universal'
     import * as Crypto from '@aeternity/aepp-sdk/es/utils/crypto'
-    import {AeButton, AeInput, AeLabel, AeList, AeListItem, AeCheck} from '@aeternity/aepp-components'
 
     import BiggerLoader from './BiggerLoader'
     import * as InputSpinner from 'vue-number-input-spinner'
@@ -57,12 +65,6 @@
     export default {
         name: 'Home',
         components: {
-            AeInput,
-            AeButton,
-            AeLabel,
-            AeList,
-            AeListItem,
-            AeCheck,
             PrismEditor,
             BiggerLoader,
             InputSpinner
