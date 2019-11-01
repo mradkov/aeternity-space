@@ -9,9 +9,34 @@
       <h2>æternity AENS naming system</h2>
       <div class="container">
         ... display info here
+
+        <div id="auctions">
+
+          <label>Filter by Name:</label>
+          <input type="text" class="form-control" v-model="filters.name.value"/>
+
+          <v-table
+            :data="namesAuctionsActive"
+            :filters="filters"
+            class="table table-bordered">
+            <thead slot="head">
+                <th>Name</th>
+                <th>Expiration</th>
+                <th>Winning bid</th>
+                <th>Winning Bidder</th>
+            </thead>
+            <tbody slot="body" slot-scope="{displayData}">
+                <tr v-for="row in displayData" :key="row.id">
+                  <td>{{ row.name }}</td>
+                  <td>{{ row.expiration }}</td>
+                  <td>{{ row.winning_bid }}</td>
+                  <td>{{ row.winning_bidder }}</td>
+                </tr>
+            </tbody>
+          </v-table>
+        </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -27,6 +52,7 @@
     import {AeButton, AeInput, AeLabel, AeList, AeListItem, AeCheck} from '@aeternity/aepp-components'
 
     import BiggerLoader from './BiggerLoader'
+    import * as InputSpinner from 'vue-number-input-spinner'
 
     export default {
         name: 'Home',
@@ -38,38 +64,58 @@
             AeListItem,
             AeCheck,
             PrismEditor,
-            BiggerLoader
+            BiggerLoader,
+            InputSpinner
         },
         data() {
             return {
-                nodeUrl: "https://testnet.aeternity.art",
-                keypair: null,
-                contractInstance: null,
-                address: null,
-                client: null,
-                tasks: [],
                 showLoading: true,
-                functionAddTaskExists: false,
-                addTodoText: "",
-                loadingProgress: "",
-                allErrors: []
+                loadingProgress: "gathering data",
+                names: [],
+                namesAuctionsActive: [],
+                namesAuctionsCount: null,
+                filters: {
+                  name: { value: '', keys: ['name'] },
+                }
             }
         },
         methods: {
-            getKeypair() {
-                let keypairString = localStorage.getItem('testnet-keypair');
-                let keypair = keypairString ? JSON.parse(keypairString) : Crypto.generateKeyPair();
-                localStorage.setItem('testnet-keypair', JSON.stringify(keypair));
-                return keypair;
+            filterLength (filterValue, row) {
+              return row.length >= filterValue.min && row.length <= filterValue.max
             },
             transformTasksList(list) {
                 return list.map(([id, task]) => {
                     return {...{id: id}, ...task};
                 });
             },
+            loading(status) {
+              this.showLoading = status;
+            },
+            async getAuctionsActive() {
+              this.loading(true);
+              //Get a list of all the active name auctions
+              this.$axios
+                .get('https://mainnet.aeternal.io/middleware/names/auctions/active')
+                .then(response => {
+                  var parsedobj = JSON.parse(JSON.stringify(response))
+                  this.namesAuctionsActive = (parsedobj.data)
+                  this.namesAuctionsCount = parsedobj.data.length
+                  this.loading(false);
+                })
+            },
+            async getAuctionsActiveCount() {
+              //Get a list of all the active name auctions count
+              this.$axios
+                .get('https://mainnet.aeternal.io/middleware/names/auctions/active/count')
+                .then(response => {
+                    var parsedobj = JSON.parse(JSON.stringify(response))
+                    this.namesAuctionsCount = parsedobj.data.length
+                })
+            },
         },
         async created() {
-            this.showLoading = false;
+            // get auctions from middleware
+            await this.getAuctionsActive();
         },
     }
 </script>
@@ -78,39 +124,6 @@
   #app-content {
     max-width: 1200px;
     padding: 0 20px 20px;
-  }
-
-  #check-contract {
-    margin-top: 10px;
-  }
-
-  #reset-contract {
-    margin-left: 10px;
-  }
-
-  .todo-list {
-    margin-top: 2rem;
-  }
-
-  .editor {
-    display: block;
-    max-width: 100vw;
-  }
-
-  #add-todo {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-
-  #add-todo-button {
-    min-width: 170px;
-    margin-left: 10px;
-  }
-
-  .completed-task {
-    text-decoration: line-through;
   }
 
   .errors div {
