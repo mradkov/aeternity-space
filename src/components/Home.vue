@@ -46,7 +46,7 @@
               class="table table-responsive table-bordered">
               <thead slot="head">
                   <th>Name</th>
-                  <th>Expire at</th>
+                  <th>Expires at</th>
                   <th>Winning bid</th>
                   <th>Highest bidder</th>
               </thead>
