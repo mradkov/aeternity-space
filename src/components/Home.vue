@@ -5,57 +5,69 @@
         <BiggerLoader :progress="loadingProgress"></BiggerLoader>
       </div>
     </div>
-    <div id="app-content">
+    <div id="app-content" class="container mt-5">
       <h2>æternity AENS naming system</h2>
-      <div class="container">
-        <ae-badge>
-          Explore AENS
-        </ae-badge>
+      <div class="container mt-5">
+          <ae-badge>
+            Explore AENS
+          </ae-badge>
+          <ae-switch
+            name="example"
+            :choices="[
+              { label: 'Active auctions', value: 1 },
+              { label: 'Finished auctions', value: 2 },
+              { label: 'Claim name', value: 3 }
+            ]"
+            :default="1"
+          />
 
         <div id="auctions">
-
-          <label>Filter by Name:</label>
-          <input type="text" class="form-control" v-model="filters.name.value"/>
-
-          <v-table
-            :data="namesAuctionsActive"
-            :filters="filters"
-            class="table table-bordered">
-            <thead slot="head">
-                <th>Name</th>
-                <th>Expire at</th>
-                <th>Winning bid</th>
-                <th>Highest bidder</th>
-            </thead>
-            <tbody slot="body" slot-scope="{displayData}">
-                <tr v-for="row in displayData" :key="row.id">
-                  <td>
-                    <ae-text face="mono-base">
-                      {{ row.name }}
-                    </ae-text>
-                  </td>
-                  <td>
-                    Block: 
-                    {{ row.expiration }}
-                    ~ 19:00:00 est
-                  </td>
-                  <td>{{ (row.winning_bid * Math.pow(10,-18)).toFixed(2) }} AE</td>
-                  <td>
-                    <tr class="tr-noborder">
-                      <td>
-                        <ae-identicon :address="row.winning_bidder" size="xs" />
-                      </td>
-                      <td>
-                         <ae-address
-                          length='short'
-                          :value="row.winning_bidder"
-                        />
-                      </td>
-                    </tr>
-                  </td>
-                </tr>
-            </tbody>
-          </v-table>
+          <div class="row">
+            <label>Filter by Name:</label>
+            <input type="text" class="form-control" v-model="filters.name.value"/>
+          </div>
+          
+          <div class="row">
+            <v-table
+              :data="namesAuctionsActive"
+              :filters="filters"
+              class="table table-responsive table-bordered">
+              <thead slot="head">
+                  <th>Name</th>
+                  <th>Expire at</th>
+                  <th>Winning bid</th>
+                  <th>Highest bidder</th>
+              </thead>
+              <tbody slot="body" slot-scope="{displayData}">
+                  <tr v-for="row in displayData" :key="row.id">
+                    <td>
+                      <ae-text face="mono-base">
+                        {{ row.name }}
+                      </ae-text>
+                    </td>
+                    <td>
+                      Block: 
+                      {{ row.expiration }}
+                      ~ 19:00:00 est {{ currentHeight }}
+                    </td>
+                    <td>{{ (row.winning_bid * Math.pow(10,-18)).toFixed(2) }} AE</td>
+                    <td>
+                      <tr class="tr-noborder">
+                        <td>
+                          <ae-identicon :address="row.winning_bidder" size="xs" />
+                        </td>
+                        <td>
+                          <ae-address
+                            length='short'
+                            :value="row.winning_bidder"
+                          />
+                        </td>
+                      </tr>
+                    </td>
+                  </tr>
+              </tbody>
+            </v-table>
+          </div>
         </div>
       </div>
     </div>
@@ -91,7 +103,8 @@
                 namesAuctionsCount: null,
                 filters: {
                   name: { value: '', keys: ['name'] },
-                }
+                },
+                currentHeight: 162125
             }
         },
         methods: {
@@ -127,10 +140,19 @@
                     this.namesAuctionsCount = parsedobj.data.length
                 })
             },
+            async getCurrentHeight() {
+               this.$axios
+                .get('https://mainnet.aeternal.io/v2/key-blocks/current/height')
+                .then(response => {
+                    var parsedobj = JSON.parse(JSON.stringify(response))
+                    this.currentHeight = parsedobj.data.length
+                })
+            }
         },
         async created() {
             // get auctions from middleware
             await this.getAuctionsActive();
+            await this.getCurrentHeight();
         },
     }
 </script>
