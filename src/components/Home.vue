@@ -23,7 +23,7 @@
                 <th>Name</th>
                 <th>Expiration</th>
                 <th>Winning bid</th>
-                <th>Winning Bidder</th>
+                <th>Highest bidder</th>
             </thead>
             <tbody slot="body" slot-scope="{displayData}">
                 <tr v-for="row in displayData" :key="row.id">
