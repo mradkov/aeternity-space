@@ -20,6 +20,7 @@
               { label: 'Claim name', value: 3 }
             ]"
             :default="1"
+            v-model="switchState"
           />
 
         <div id="auctions">
@@ -57,10 +58,14 @@
               </div>
           </div>
           
-          <div class="row mt-5">
+          <!-- active auctions -->
+          <div v-if="switchState == 1" class="mt-5">
             <v-table
               :data="namesAuctionsActive"
               :filters="filters"
+              :currentPage.sync="currentPage"
+              :pageSize="10"
+              @totalPagesChanged="totalPages = $event"
               class="table table-responsive table-bordered">
               <thead slot="head">
                   <th>Name</th>
@@ -97,7 +102,24 @@
                   </tr>
               </tbody>
             </v-table>
+
+            <smart-pagination
+              :currentPage.sync="currentPage"
+              :totalPages="totalPages"
+            />
+
           </div>
+
+          <!-- finished auctions -->
+          <div v-if="switchState == 2" class="mt-5">
+             finished auctions
+          </div>
+
+          <!-- claim name -->
+          <div v-if="switchState == 3" class="mt-5">
+             claim name
+          </div>
+
         </div>
       </div>
     </div>
@@ -136,9 +158,12 @@
                   filterLength: { value: { min: 1, max: 99 }, custom: this.filterLength }
                 },
                 currentHeight: 162125,
+                switchState: 1,
                 slider: {
                   step: "1"
-                }
+                },
+                currentPage: 1,
+                totalPages: 0
             }
         },
         methods: {
