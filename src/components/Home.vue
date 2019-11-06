@@ -5,8 +5,12 @@
         <BiggerLoader :progress="loadingProgress"></BiggerLoader>
       </div>
     </div>
-    <div id="app-content" class="container mt-5">
-      <h2>æternity AENS naming system</h2>
+    <div id="app-content" class="mt-5">
+      <div class="container">
+        <div class="row">
+          <h2 class="h2">æternity AENS naming system</h2>
+        </div>
+      </div>
       <div class="container mt-5">
           <ae-badge>
             Explore AENS
@@ -23,16 +27,17 @@
             v-model="switchState"
           />
 
-        <div id="auctions">
-          <h4 class="text-left">Filters</h4>
+        <div class="container" id="auctions">
+          <h4 class="h4">Filters</h4>
           <div class="row">
+ <div class="col-md-6">
             <ae-label>name</ae-label>
             <ae-input
               v-model="filters.name.value"
             />
           </div>
 
-          <div class="row">
+          <div class="col-md-6">
               <ae-label>length</ae-label>
               <div class="range-slider" @change="slide">
                 <div class="d-flex justify-content-center my-4">
@@ -57,67 +62,119 @@
                 </div>
               </div>
           </div>
+          </div>
           
-          <!-- active auctions -->
-          <div v-if="switchState == 1" class="mt-5">
-            <v-table
-              :data="namesAuctionsActive"
-              :filters="filters"
-              :currentPage.sync="currentPage"
-              :pageSize="10"
-              @totalPagesChanged="totalPages = $event"
-              class="table table-responsive table-bordered">
-              <thead slot="head">
-                  <th>Name</th>
-                  <th>Expires at</th>
-                  <th>Winning bid</th>
-                  <th>Highest bidder</th>
-              </thead>
-              <tbody slot="body" slot-scope="{displayData}">
-                  <tr v-for="row in displayData" :key="row.id">
-                    <td>
-                      <ae-text face="mono-base">
-                        {{ row.name }}
-                      </ae-text>
-                    </td>
-                    <td>
-                      Block: 
-                      {{ row.expiration }}
-                      ~ {{ calculateEndDate(row.expiration) }}
-                    </td>
-                    <td>{{ (row.winning_bid * Math.pow(10,-18)).toFixed(2) }} AE</td>
-                    <td>
-                      <tr class="tr-noborder">
-                        <td>
-                          <ae-identicon :address="row.winning_bidder" size="xs" />
-                        </td>
-                        <td>
-                          <ae-address
-                            length='short'
-                            :value="row.winning_bidder"
-                          />
-                        </td>
-                      </tr>
-                    </td>
-                  </tr>
-              </tbody>
-            </v-table>
+          <div class="row">
+            <!-- active auctions -->
+            <div v-if="switchState == 1" class="col-md-12 mt-5">
+              <v-table
+                :data="namesAuctionsActive"
+                :filters="filters"
+                :currentPage.sync="currentPage"
+                :pageSize="10"
+                @totalPagesChanged="totalPages = $event"
+                class="table table-responsive table-bordered">
+                <thead slot="head">
+                    <th>Name</th>
+                    <th>Expires at</th>
+                    <th>Winning bid</th>
+                    <th>Highest bidder</th>
+                </thead>
+                <tbody slot="body" slot-scope="{displayData}">
+                    <tr v-for="row in displayData" :key="row.id">
+                      <td>
+                        <ae-text face="mono-base">
+                          {{ row.name }}
+                        </ae-text>
+                      </td>
+                      <td>
+                        Block: 
+                        {{ row.expiration }}
+                        ~ {{ calculateEndDate(row.expiration) }}
+                      </td>
+                      <td>{{ (row.winning_bid * Math.pow(10,-18)).toFixed(2) }} AE</td>
+                      <td>
+                        <tr class="tr-noborder">
+                          <td>
+                            <ae-identicon :address="row.winning_bidder" size="xs" />
+                          </td>
+                          <td>
+                            <ae-address
+                              length='short'
+                              :value="row.winning_bidder"
+                            />
+                          </td>
+                        </tr>
+                      </td>
+                    </tr>
+                </tbody>
+              </v-table>
 
-            <smart-pagination
-              :currentPage.sync="currentPage"
-              :totalPages="totalPages"
-            />
+              <smart-pagination
+                :currentPage.sync="currentPage"
+                :totalPages="totalPages"
+              />
 
-          </div>
+            </div>
 
-          <!-- finished auctions -->
-          <div v-if="switchState == 2" class="mt-5">
-             finished auctions
-          </div>
+            <!-- finished auctions -->
+            <div v-if="switchState == 2" class="mt-5">
 
-          <!-- claim name -->
-          <div v-if="switchState == 3" class="mt-5">
-             claim name
+              <v-table
+                :data="allNames"
+                :filters="filters"
+                :currentPage.sync="currentPage"
+                :pageSize="10"
+                @totalPagesChanged="totalPages = $event"
+                class="table table-responsive table-bordered">
+                <thead slot="head">
+                    <th>Name</th>
+                    <th>Expires at</th>
+                    <th>Winning bid</th>
+                    <th>Highest bidder</th>
+                </thead>
+                <tbody slot="body" slot-scope="{displayData}">
+                    <tr v-for="row in displayData" :key="row.id">
+                      <td>
+                        <ae-text face="mono-base">
+                          {{ row.name }}
+                        </ae-text>
+                      </td>
+                      <td>
+                        Block: 
+                        {{ row.expiration }}
+                        ~ {{ calculateEndDate(row.expiration) }}
+                      </td>
+                      <td>{{ (row.winning_bid * Math.pow(10,-18)).toFixed(2) }} AE</td>
+                      <td>
+                        <tr class="tr-noborder">
+                          <td>
+                            <ae-identicon :address="row.winning_bidder" size="xs" />
+                          </td>
+                          <td>
+                            <ae-address
+                              length='short'
+                              :value="row.winning_bidder"
+                            />
+                          </td>
+                        </tr>
+                      </td>
+                    </tr>
+                </tbody>
+              </v-table>
+
+              <smart-pagination
+                :currentPage.sync="currentPage"
+                :totalPages="totalPages"
+              />
+
+            </div>
+
+            <!-- claim name -->
+            <div v-if="switchState == 3" class="mt-5">
+              claim name
+            </div>
+
           </div>
 
         </div>
@@ -163,7 +220,8 @@
                   step: "1"
                 },
                 currentPage: 1,
-                totalPages: 0
+                totalPages: 0,
+                allNames: []
             }
         },
         methods: {
@@ -205,17 +263,47 @@
             loading(status) {
               this.showLoading = status;
             },
-            async getAuctionsActive() {
-              this.loading(true);
-              //Get a list of all the active name auctions
+            saveAuctions() {
+              localStorage.setItem('auctions-active', this.namesAuctionsActive);
+            },
+            async getAllNames() {
               this.$axios
-                .get('https://mainnet.aeternal.io/middleware/names/auctions/active')
+                .get('https://mainnet.aeternal.io/middleware/names?limit=20&page=1')
                 .then(response => {
-                  var parsedobj = JSON.parse(JSON.stringify(response))
-                  this.namesAuctionsActive = (parsedobj.data)
-                  this.namesAuctionsCount = parsedobj.data.length
-                  this.loading(false);
+                    var parsedobj = JSON.parse(JSON.stringify(response))
+                    this.allNames = parsedobj.data
                 })
+            },
+            getAuctions() {
+              return localStorage.getItem('auctions-active');
+            },
+            async getAuctionsActive(count = null) {
+              let loader = this.getAuctions().length > 0 ? false : true;
+              this.loading(loader);
+              //Get a list of all the active name auctions
+
+              if (count && count > 0) {
+                this.$axios
+                  .get(`https://mainnet.aeternal.io/middleware/names/auctions/active?limit=${count}`)
+                  .then(response => {
+                    var parsedobj = JSON.parse(JSON.stringify(response))
+                    this.namesAuctionsActive = (parsedobj.data)
+                    this.namesAuctionsCount = parsedobj.data.length
+                    this.saveAuctions();
+                    this.loading(false);
+                  })
+              }
+              else {
+                 this.$axios
+                  .get('https://mainnet.aeternal.io/middleware/names/auctions/active')
+                  .then(response => {
+                    var parsedobj = JSON.parse(JSON.stringify(response))
+                    this.namesAuctionsActive = (parsedobj.data)
+                    this.namesAuctionsCount = parsedobj.data.length
+                    this.saveAuctions();
+                    this.loading(false);
+                  })
+              }
             },
             async getAuctionsActiveCount() {
               //Get a list of all the active name auctions count
@@ -237,8 +325,9 @@
         },
         async created() {
             // get auctions from middleware
-            await this.getAuctionsActive();
+            await this.getAuctionsActive(10);
             await this.getCurrentHeight();
+            this.getAllNames();
         },
     }
 </script>
