@@ -278,8 +278,7 @@
               return localStorage.getItem('auctions-active');
             },
             async getAuctionsActive(count = null) {
-              let loader = this.getAuctions().length > 0 ? false : true;
-              this.loading(loader);
+              this.loading(true);
               //Get a list of all the active name auctions
 
               if (count && count > 0) {
@@ -311,7 +310,7 @@
                 .get('https://mainnet.aeternal.io/middleware/names/auctions/active/count')
                 .then(response => {
                     var parsedobj = JSON.parse(JSON.stringify(response))
-                    this.namesAuctionsCount = parsedobj.data.length
+                    this.namesAuctionsCount = parsedobj.data.count
                 })
             },
             async getCurrentHeight() {
