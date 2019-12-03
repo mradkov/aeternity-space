@@ -1,8 +1,8 @@
 {
-  "name": "aeternity-name",
+  "name": "aeternity-space",
   "version": "1.0.0",
   "main": "index.js",
-  "description": "Aeternity AENS naming system info",
+  "description": "Aeternity Space",
   "author": "Milen Radkov <milenradkov@me.com>",
   "keywords": [
     "aeternity",
