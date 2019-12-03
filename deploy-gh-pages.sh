@@ -7,9 +7,9 @@ npm install && \
 NODE_ENV=prod npm run build && \
 cd dist/ && \
 git init && \
-git remote add origin git@github.com:mradkov/aeternity-name.git && \
+git remote add origin git@github.com:mradkov/aeternity-space.git && \
 git checkout -b gh-pages && \
 git add * && \
-git commit -m "aeternity name ${GIT_REV} deployment to gh-pages" && \
+git commit -m "aeternity space ${GIT_REV} deployment to gh-pages" && \
 git fetch && git rebase -s recursive -Xtheirs origin/gh-pages && \
 git push origin gh-pages
